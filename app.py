@@ -24,13 +24,12 @@ def index():
         task_content = request.form["content"]
         new_task = Todo(content=task_content)
 
-
         try:
             db.session.add(new_task)
             db.session.commit()
             return redirect("/")
         except:
-            return "something went wrong. Please try"
+            return "something went wrong. Please try again"
 
     else:
         tasks = Todo.query.order_by(Todo.date_created).all()
@@ -39,14 +38,15 @@ def index():
 
 @app.route("/delete/<int:id>")
 def delete(id):
-    task_to_delete = Todo.query.get_or_404(id)    
+    task_to_delete = Todo.query.get_or_404(id)
 
     try:
         db.session.delete(task_to_delete)
         db.session.commit()
         return redirect("/")
     except:
-        return "something went wrong. Please try"
+        return "something went wrong. Please try again"
+
 
 @app.route("/update/<int:id>", methods=["GET", "POST"])
 def update(id):
@@ -58,10 +58,11 @@ def update(id):
             db.session.commit()
             return redirect("/")
         except:
-            pass
+            return "something went wrong. Please try again"
 
     else:
         return render_template("update.html", task=task)
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
